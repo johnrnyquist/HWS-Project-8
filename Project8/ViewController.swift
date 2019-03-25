@@ -50,15 +50,26 @@ class ViewController: UIViewController {
             currentAnswerTextField.text = ""
             score += 1
             
-            if score % 7 == 0 {
+            var canLevelUp = true
+            for wordBitButton in wordBitButtons {
+                if wordBitButton.isHidden == false {
+                    canLevelUp = false
+                }
+            }
+            if canLevelUp {
                 let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
                 ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
                 present(ac, animated: true)
             }
+        } else {
+            let ac = UIAlertController(title: "Incorrect", message: "Don't give up!", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: clearAction))
+            present(ac, animated: true)
+            score -= 1
         }
     }
     
-    @objc func clearTapped(_ sender: UIButton) {
+    func clear() {
         currentAnswerTextField.text = ""
         
         for btn in selectedButtons {
@@ -66,6 +77,14 @@ class ViewController: UIViewController {
         }
         
         selectedButtons.removeAll()
+    }
+    
+    func clearAction(action: UIAlertAction) {
+        clear()
+    }
+    
+    @objc func clearTapped(_ sender: UIButton) {
+        clear()
     }
     
     
