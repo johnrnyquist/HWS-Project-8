@@ -91,52 +91,58 @@ class ViewController: UIViewController {
     //MARK: - ViewController class
     
     func loadLevel() {
-        var clueString = ""
-        var solutionString = ""
-        var letterBits = [String]()
-        
-        /* level1.txt
-         HA|UNT|ED: Ghosts in residence
-         LE|PRO|SY: A Biblical skin disease
-         TW|ITT|ER: Short but sweet online chirping
-         OLI|VER: Has a Dickensian twist
-         ELI|ZAB|ETH: Head of state, British style
-         SA|FA|RI: The zoological web
-         POR|TL|AND: Hipster heartland
-         
-         
-         */
-        if let levelFileURL = Bundle.main.url(forResource: "level\(level)", withExtension: "txt") {
-            if let levelContents = try? String(contentsOf: levelFileURL) {
-                var lines = levelContents.components(separatedBy: "\n")
-                lines.shuffle()
-                
-                for (index, line) in lines.enumerated() {
-                    let parts = line.components(separatedBy: ": ")
-                    let answer = parts[0]
-                    let clue = parts[1]
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            var clueString = ""
+            var solutionString = ""
+            var letterBits = [String]()
+            
+            /* level1.txt
+             HA|UNT|ED: Ghosts in residence
+             LE|PRO|SY: A Biblical skin disease
+             TW|ITT|ER: Short but sweet online chirping
+             OLI|VER: Has a Dickensian twist
+             ELI|ZAB|ETH: Head of state, British style
+             SA|FA|RI: The zoological web
+             POR|TL|AND: Hipster heartland
+             
+             
+             */
+            guard let level = self?.level else {return}
+            if let levelFileURL = Bundle.main.url(forResource: "level\(level)", withExtension: "txt") {
+                if let levelContents = try? String(contentsOf: levelFileURL) {
+                    var lines = levelContents.components(separatedBy: "\n")
+                    lines.shuffle()
                     
-                    clueString += "\(index + 1). \(clue)\n"
-                    
-                    let solutionWord = answer.replacingOccurrences(of: "|", with: "")
-                    solutionString += "\(solutionWord.count) letters\n"
-                    solutionWords.append(solutionWord)
-                    
-                    let bits = answer.components(separatedBy: "|")
-                    letterBits += bits
+                    for (index, line) in lines.enumerated() {
+                        let parts = line.components(separatedBy: ": ")
+                        let answer = parts[0]
+                        let clue = parts[1]
+                        
+                        clueString += "\(index + 1). \(clue)\n"
+                        
+                        let solutionWord = answer.replacingOccurrences(of: "|", with: "")
+                        solutionString += "\(solutionWord.count) letters\n"
+                        self?.solutionWords.append(solutionWord)
+                        
+                        let bits = answer.components(separatedBy: "|")
+                        letterBits += bits
+                    }
                 }
             }
-        }
-        
-        // Now configure the buttons and labels
-        cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
-        answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        letterBits.shuffle()
-        
-        if letterBits.count == wordBitButtons.count {
-            for i in 0 ..< wordBitButtons.count {
-                wordBitButtons[i].setTitle(letterBits[i], for: .normal)
+            
+            DispatchQueue.main.async { [weak self] in
+                // Now configure the buttons and labels
+                self?.cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
+                self?.answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                letterBits.shuffle()
+                
+                if letterBits.count == self?.wordBitButtons.count {
+                    for i in 0 ..< letterBits.count {
+                        self?.wordBitButtons[i].setTitle(letterBits[i], for: .normal)
+                    }
+                }
+                
             }
         }
     }
