@@ -26,66 +26,6 @@ class ViewController: UIViewController {
     }
     var level = 1
     var solutionWords = [String]()
-
-    
-    //MARK: - #selectors
-    
-    @objc func letterTapped(_ wordBitButton: UIButton) {
-        guard let buttonTitle = wordBitButton.titleLabel?.text else { return }
-        currentAnswerTextField.text = currentAnswerTextField.text?.appending(buttonTitle)
-        selectedButtons.append(wordBitButton)
-        wordBitButton.isHidden = true
-    }
-    
-    @objc func submitTapped(_ sender: UIButton) {
-        guard let answerText = currentAnswerTextField.text else { return }
-        
-        if let solutionPosition = solutionWords.firstIndex(of: answerText) {
-            selectedButtons.removeAll()
-            
-            var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
-            splitAnswers?[solutionPosition] = answerText
-            answersLabel.text = splitAnswers?.joined(separator: "\n")
-            
-            currentAnswerTextField.text = ""
-            score += 1
-            
-            var canLevelUp = true
-            for wordBitButton in wordBitButtons {
-                if wordBitButton.isHidden == false {
-                    canLevelUp = false
-                }
-            }
-            if canLevelUp {
-                let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
-                ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
-                present(ac, animated: true)
-            }
-        } else {
-            let ac = UIAlertController(title: "Incorrect", message: "Don't give up!", preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: clearAction))
-            present(ac, animated: true)
-            score -= 1
-        }
-    }
-    
-    func clear() {
-        currentAnswerTextField.text = ""
-        
-        for btn in selectedButtons {
-            btn.isHidden = false
-        }
-        
-        selectedButtons.removeAll()
-    }
-    
-    func clearAction(action: UIAlertAction) {
-        clear()
-    }
-    
-    @objc func clearTapped(_ sender: UIButton) {
-        clear()
-    }
     
     
     //MARK: - ViewController class
@@ -142,7 +82,6 @@ class ViewController: UIViewController {
                         self?.wordBitButtons[i].setTitle(letterBits[i], for: .normal)
                     }
                 }
-                
             }
         }
     }
@@ -156,6 +95,65 @@ class ViewController: UIViewController {
         for btn in wordBitButtons {
             btn.isHidden = false
         }
+    }
+    
+    func clear() {
+        currentAnswerTextField.text = ""
+        
+        for btn in selectedButtons {
+            btn.isHidden = false
+        }
+        
+        selectedButtons.removeAll()
+    }
+    
+    func clearAction(action: UIAlertAction) {
+        clear()
+    }
+    
+    //MARK: - ViewController #selectors
+    
+    @objc func letterTapped(_ wordBitButton: UIButton) {
+        guard let buttonTitle = wordBitButton.titleLabel?.text else { return }
+        currentAnswerTextField.text = currentAnswerTextField.text?.appending(buttonTitle)
+        selectedButtons.append(wordBitButton)
+        wordBitButton.isHidden = true
+    }
+    
+    @objc func submitTapped(_ sender: UIButton) {
+        guard let answerText = currentAnswerTextField.text else { return }
+        
+        if let solutionPosition = solutionWords.firstIndex(of: answerText) {
+            selectedButtons.removeAll()
+            
+            var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
+            splitAnswers?[solutionPosition] = answerText
+            answersLabel.text = splitAnswers?.joined(separator: "\n")
+            
+            currentAnswerTextField.text = ""
+            score += 1
+            
+            var canLevelUp = true
+            for wordBitButton in wordBitButtons {
+                if wordBitButton.isHidden == false {
+                    canLevelUp = false
+                }
+            }
+            if canLevelUp {
+                let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
+                present(ac, animated: true)
+            }
+        } else {
+            let ac = UIAlertController(title: "Incorrect", message: "Don't give up!", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: clearAction))
+            present(ac, animated: true)
+            score -= 1
+        }
+    }
+
+    @objc func clearTapped(_ sender: UIButton) {
+        clear()
     }
     
     
