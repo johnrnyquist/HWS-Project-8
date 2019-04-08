@@ -54,6 +54,7 @@ class ViewController: UIViewController {
                     lines.shuffle()
                     
                     for (index, line) in lines.enumerated() {
+                        if line == "" { continue }
                         let parts = line.components(separatedBy: ": ")
                         let answer = parts[0]
                         let clue = parts[1]
@@ -92,16 +93,16 @@ class ViewController: UIViewController {
         
         loadLevel()
         
-        for btn in wordBitButtons {
-            btn.isHidden = false
+        for wordBitButton in wordBitButtons {
+            UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: { wordBitButton.alpha = 1 })
         }
     }
     
     func clear() {
         currentAnswerTextField.text = ""
         
-        for btn in selectedButtons {
-            btn.isHidden = false
+        for wordBitButton in selectedButtons {
+            UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: { wordBitButton.alpha = 1 })
         }
         
         selectedButtons.removeAll()
@@ -117,7 +118,7 @@ class ViewController: UIViewController {
         guard let buttonTitle = wordBitButton.titleLabel?.text else { return }
         currentAnswerTextField.text = currentAnswerTextField.text?.appending(buttonTitle)
         selectedButtons.append(wordBitButton)
-        wordBitButton.isHidden = true
+        UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: { wordBitButton.alpha = 0 })
     }
     
     @objc func submitTapped(_ sender: UIButton) {
@@ -135,7 +136,7 @@ class ViewController: UIViewController {
             
             var canLevelUp = true
             for wordBitButton in wordBitButtons {
-                if wordBitButton.isHidden == false {
+                if wordBitButton.alpha == 0 {
                     canLevelUp = false
                 }
             }
